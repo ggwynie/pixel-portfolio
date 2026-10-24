@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gwyneth Eunice - Pixel Portfolio</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Press Start 2P, Silkscreen & VT323 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            pastel: {
+              bg: '#FDF0F5',
+              card: '#FFFFFF',
+              pink: '#FFB7B2',
+              hotPink: '#FF85A1',
+              deepPink: '#E85D75',
+              blue: '#A2E8DD',
+              skyBlue: '#B5E2FA',
+              purple: '#D8B4F8',
+              yellow: '#FFF3B0',
+              windowHead: '#FF94B9',
+              windowBorder: '#EE6C8D'
+            }
+          },
+          fontFamily: {
+            pixel: ['"Press Start 2P"', 'monospace'],
+            retro: ['"Silkscreen"', 'sans-serif'],
+            vt: ['"VT323"', 'monospace']
+          },
+          boxShadow: {
+            'pixel-sm': '2px 2px 0px #2A101C',
+            'pixel': '4px 4px 0px #2A101C',
+            'pixel-lg': '6px 6px 0px #2A101C',
+            'pixel-soft': '4px 4px 0px #FF94B9'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Pixelated & Retro Styles */
+    body {
+      background-color: #FEE1EB;
+      color: #2A101C;
+      image-rendering: pixelated;
+      font-family: 'Silkscreen', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Scroll Snap Container for Page-Like Section Transitions */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Subtle CRT Scanlines */
+    .scanlines {
+      background: linear-gradient(
+        rgba(255, 255, 255, 0) 50%, 
+        rgba(255, 183, 178, 0.12) 50%
+      );
+      background-size: 100% 4px;
+      pointer-events: none;
+    }
+
+    /* Pixel Grid Background */
+    .pixel-grid-bg {
+      background-image: 
+        linear-gradient(to right, rgba(255, 133, 161, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 133, 161, 0.1) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FEE1EB;
+      border-left: 2px solid #2A101C;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #FF85A1;
+      border: 2px solid #2A101C;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #A2E8DD;
+    }
+
+    /* Enhanced Page/Section Scroll Reveal & Transition Animations */
+    .reveal-section {
+      opacity: 0;
+      transform: translateY(60px) scale(0.97);
+      filter: blur(4px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease-out;
+      will-change: opacity, transform, filter;
+    }
+    .reveal-section.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0px);
+    }
+
+    /* Staggered Child Element Animations */
+    .reveal-section .stagger-item {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-section.visible .stagger-item {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-section.visible .stagger-item:nth-child(1) { transition-delay: 0.1s; }
+    .reveal-section.visible .stagger-item:nth-child(2) { transition-delay: 0.25s; }
+    .reveal-section.visible .stagger-item:nth-child(3) { transition-delay: 0.4s; }
+    .reveal-section.visible .stagger-item:nth-child(4) { transition-delay: 0.55s; }
+
+    /* Pixel Transition Screen Flash Overlay */
+    #page-wipe-overlay {
+      position: fixed;
+      inset: 0;
+      background: #FF85A1;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0;
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 0.35s ease-in-out, opacity 0.35s ease-in-out;
+    }
+    #page-wipe-overlay.active {
+      opacity: 1;
+      transform: scaleY(1);
+    }
+
+    /* Floating Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(1deg); }
+    }
+    .pixel-float {
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    /* Marquee Banner */
+    .marquee-container {
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-content {
+      display: inline-block;
+      animation: marquee 24s linear infinite;
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Retro Window Box with Interactive Glow */
+    .window-box {
+      border: 3px solid #2A101C;
+      box-shadow: 4px 4px 0px #2A101C;
+      background-color: #FFFFFF;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .window-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 7px 7px 0px #2A101C;
+    }
+
+    /* Retro Button States */
+    .btn-pixel {
+      transition: transform 0.08s, box-shadow 0.08s, background-color 0.2s;
+      border: 2px solid #2A101C;
+      box-shadow: 3px 3px 0px #2A101C;
+    }
+    .btn-pixel:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px #2A101C;
+    }
+    .btn-pixel:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px #2A101C !important;
+    }
+    .btn-pixel-lg {
+      border: 3px solid #2A101C;
+      box-shadow: 4px 4px 0px #2A101C;
+      transition: transform 0.08s, box-shadow 0.08s;
+    }
+    .btn-pixel-lg:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 5px 5px 0px #2A101C;
+    }
+    .btn-pixel-lg:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px #2A101C !important;
+    }
+
+    /* Tab Switch Animation Effect */
+    .tab-active {
+      background-color: #FF85A1 !important;
+      color: #FFFFFF !important;
+      transform: translateY(-2px);
+      box-shadow: 4px 4px 0px #2A101C !important;
+    }
+  </style>
+</head>
+<body class="pixel-grid-bg min-h-screen flex flex-col relative selection:bg-pastel-hotPink selection:text-white">
+
+  <!-- Screen Wipe Page Transition Overlay -->
+  <div id="page-wipe-overlay"></div>
+
+  <!-- Scanlines Overlay -->
+  <div id="crt-overlay" class="scanlines fixed inset-0 z-50 pointer-events-none"></div>
+
+  <!-- TOP NAVIGATION BAR / HUD -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b-4 border-black px-4 py-3 font-pixel text-xs shadow-md">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Player Tag & Status -->
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 bg-pastel-skyBlue px-3 py-1 border-2 border-black rounded-sm">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-pastel-hotPink animate-ping"></span>
+          <span class="text-black font-bold">PORTFOLIO.EXE</span>
+        </div>
+        <div class="hidden sm:flex items-center gap-1.5 text-pastel-hotPink">
+          <!-- Pixel Heart Icon SVG -->
+          <svg class="w-4 h-4" viewBox="0 0 12 12" fill="#FF85A1">
+            <path d="M2 2h2v2H2zM4 0h4v2H4zM8 2h2v2H8zM10 4h2v4h-2zM8 8h2v2H8zM6 10h2v2H6zM4 10h2v2H4zM2 8h2v2H2zM0 4h2v4H0zM4 4h4v4H4z"/>
+          </svg>
+          <svg class="w-4 h-4" viewBox="0 0 12 12" fill="#FF85A1">
+            <path d="M2 2h2v2H2zM4 0h4v2H4zM8 2h2v2H8zM10 4h2v4h-2zM8 8h2v2H8zM6 10h2v2H6zM4 10h2v4H4zM2 8h2v2H2zM0 4h2v4H0zM4 4h4v4H4z"/>
+          </svg>
+          <svg class="w-4 h-4" viewBox="0 0 12 12" fill="#FF85A1">
+            <path d="M2 2h2v2H2zM4 0h4v2H4zM8 2h2v2H8zM10 4h2v4h-2zM8 8h2v2H8zM6 10h2v2H6zM4 10h2v4H4zM2 8h2v2H2zM0 4h2v4H0zM4 4h4v4H4z"/>
+          </svg>
+          <span class="ml-1 text-black font-bold">GWYNETH</span>
+        </div>
+      </div>
+
+      <!-- Quick Links Navigation with Interactive Page Transition Triggers -->
+      <nav class="hidden md:flex items-center gap-6 font-vt text-2xl">
+        <a href="#about" onclick="triggerPageWipe(event, '#about')" class="nav-link hover:text-pastel-hotPink transition-colors font-bold relative py-1">Profile</a>
+        <a href="#skills" onclick="triggerPageWipe(event, '#skills')" class="nav-link hover:text-pastel-hotPink transition-colors font-bold relative py-1">Skills</a>
+        <a href="#projects" onclick="triggerPageWipe(event, '#projects')" class="nav-link hover:text-pastel-hotPink transition-colors font-bold relative py-1">Work</a>
+        <a href="#contact" onclick="triggerPageWipe(event, '#contact')" class="nav-link hover:text-pastel-hotPink transition-colors font-bold relative py-1">Contact</a>
+      </nav>
+
+      <!-- Audio Toggle Button -->
+      <div class="flex items-center gap-2">
+        <button id="sfx-btn" class="btn-pixel bg-pastel-blue text-black px-3 py-1 text-[10px] font-pixel flex items-center gap-1.5 font-bold">
+          <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+          <span id="sfx-text">SFX ON</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-8 flex flex-col gap-24">
+
+    <!-- HERO SECTION -->
+    <section class="reveal-section relative bg-white border-4 border-black p-6 md:p-10 shadow-pixel-lg text-center rounded-sm overflow-hidden">
+      
+      <!-- Aesthetic Stars & Pixel Clouds -->
+      <div class="absolute top-4 left-6 text-pastel-hotPink font-pixel text-xl pixel-float">+</div>
+      <div class="absolute top-10 right-10 text-pastel-blue font-pixel text-2xl pixel-float" style="animation-delay: 1s;">+</div>
+      <div class="absolute bottom-6 left-12 text-pastel-purple font-pixel text-lg pixel-float" style="animation-delay: 1.5s;">+</div>
+      
+      <!-- Main Header Badge -->
+      <div class="stagger-item inline-block bg-pastel-blue text-black px-4 py-1 border-2 border-black font-pixel text-xs mb-4 shadow-pixel-sm">
+        WELCOME TO MY DIGITAL SPACE
+      </div>
+
+      <!-- Main Title -->
+      <h1 class="stagger-item text-3xl md:text-6xl font-pixel text-pastel-hotPink drop-shadow-[3px_3px_0px_#2A101C] tracking-wide leading-tight mb-4">
+        PORTFOLIO
+      </h1>
+
+      <!-- Character Sprite Avatar & CTA Buttons -->
+      <div class="stagger-item flex flex-col sm:flex-row items-center justify-center gap-8 my-6">
+        
+        <!-- Standard Character Sprite Avatar (GWYNETH EUNICE) -->
+        <div class="relative group cursor-pointer" id="avatar-sprite" onclick="switchConsoleTab('overview')">
+          <div class="w-28 h-28 bg-pastel-skyBlue border-3 border-black flex items-center justify-center p-1 rounded shadow-pixel hover:scale-105 transition-transform">
+            
+            <!-- CONSISTENT PIXEL GIRL AVATAR SVG -->
+            <svg class="w-24 h-24 pixel-float" viewBox="0 0 24 24" fill="none">
+              <!-- Hair back -->
+              <rect x="5" y="4" width="14" height="13" fill="#5C3A21"/>
+              <rect x="4" y="6" width="16" height="12" fill="#5C3A21"/>
+              <!-- Face -->
+              <rect x="7" y="6" width="10" height="10" fill="#FFE0BD"/>
+              <!-- Bangs -->
+              <rect x="7" y="5" width="10" height="3" fill="#5C3A21"/>
+              <!-- Cute Eyes -->
+              <rect x="9" y="9" width="2" height="2.5" fill="#2A101C"/>
+              <rect x="13" y="9" width="2" height="2.5" fill="#2A101C"/>
+              <rect x="9.5" y="9" width="1" height="1" fill="#FFFFFF"/>
+              <rect x="13.5" y="9" width="1" height="1" fill="#FFFFFF"/>
+              <!-- Cheeks -->
+              <rect x="8" y="11" width="2" height="1" fill="#FF85A1"/>
+              <rect x="14" y="11" width="2" height="1" fill="#FF85A1"/>
+              <!-- Mouth -->
+              <rect x="11" y="12" width="2" height="1" fill="#E85D75"/>
+              <!-- Ribbon/Bow -->
+              <rect x="14" y="4" width="4" height="3" fill="#FF85A1"/>
+              <rect x="15.5" y="5" width="1" height="1" fill="#FFFFFF"/>
+              <!-- Outfit -->
+              <rect x="7" y="16" width="10" height="6" fill="#A2E8DD"/>
+              <rect x="9" y="16" width="6" height="2" fill="#FFFFFF"/>
+            </svg>
+
+          </div>
+          <span class="absolute -bottom-2 bg-pastel-hotPink text-white text-[9px] font-pixel px-2 py-0.5 border border-black shadow-pixel-sm">GWYNETH</span>
+        </div>
+
+        <!-- Action Call to Action Buttons -->
+        <div class="flex flex-col gap-3">
+          <a href="#projects" onclick="triggerPageWipe(event, '#projects')" class="btn-pixel-lg inline-block bg-pastel-blue hover:bg-pastel-hotPink hover:text-white text-black font-pixel text-xs md:text-sm px-6 py-3.5 tracking-wider uppercase font-bold">
+            [ VIEW CASE STUDIES ]
+          </a>
+          <a href="#contact" onclick="triggerPageWipe(event, '#contact')" class="btn-pixel inline-block bg-white hover:bg-pastel-yellow text-black font-pixel text-xs px-4 py-2.5 text-center font-bold">
+            GET IN TOUCH
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Tagline -->
+      <p class="stagger-item font-vt text-2xl md:text-3xl text-black tracking-wide mt-2">
+        UI/UX Designer & Product Strategist • Human-Centered Digital Experiences
+      </p>
+
+    </section>
+
+    <!-- MARQUEE DIVIDER BANNER -->
+    <div class="bg-pastel-hotPink border-y-4 border-black py-2.5 font-pixel text-xs text-white font-bold marquee-container shadow-pixel">
+      <div class="marquee-content">
+        + UI/UX DESIGN + PRODUCT STRATEGY + USER RESEARCH + DESIGN SYSTEMS + INTERACTION DESIGN + ACCESSIBILITY + GWYNETH EUNICE + PORTFOLIO +
+      </div>
+    </div>
+
+    <!-- LEVEL 01: MEET THE PLAYER / ABOUT ME SECTION -->
+    <section id="about" class="reveal-section pt-2 flex flex-col gap-6">
+      <div class="flex items-center justify-between border-b-4 border-black pb-2">
+        <div class="flex items-center gap-3">
+          <h2 class="font-pixel text-xl md:text-3xl text-pastel-hotPink drop-shadow-[2px_2px_0px_#2A101C]">
+            Level 01
+          </h2>
+          <span class="font-vt text-2xl md:text-3xl text-gray-700">/ Professional Profile</span>
+        </div>
+        <span class="bg-pastel-yellow border-2 border-black font-pixel text-[10px] px-2 py-1">PROFILE READOUT</span>
+      </div>
+
+      <!-- Main Retro Screen Layout Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        
+        <!-- LEFT: Handheld Gaming Console Style Display (Pink Console Frame) -->
+        <div class="lg:col-span-7 flex flex-col items-center stagger-item">
+          <div class="w-full bg-pastel-hotPink p-4 md:p-6 border-4 border-black shadow-pixel-lg rounded-2xl relative">
+            
+            <!-- Top Console Display Screen -->
+            <div class="bg-black p-3 border-4 border-black rounded-xl mb-4 relative overflow-hidden">
+              <div class="flex justify-center mb-1">
+                <span class="w-2 h-2 rounded-full bg-gray-600 inline-block"></span>
+              </div>
+              
+              <!-- Dynamic Console Screen Inner Content -->
+              <div id="console-display" class="bg-pastel-bg border-2 border-pastel-hotPink p-4 min-h-[220px] flex flex-col items-center justify-center text-center relative font-vt transition-all duration-300">
+                <span class="absolute top-2 left-2 text-pastel-hotPink font-pixel text-xs">+</span>
+                <span class="absolute top-2 right-2 text-pastel-blue font-pixel text-xs">+</span>
+                
+                <!-- Avatar Frame with EXACT MATCHING CHARACTER -->
+                <div class="w-24 h-24 border-3 border-black bg-pastel-skyBlue p-1 mb-3 rounded-full relative shadow-pixel-sm flex items-center justify-center">
+                  
+                  <svg class="w-20 h-20" viewBox="0 0 24 24" fill="none">
+                    <!-- Hair back -->
+                    <rect x="5" y="4" width="14" height="13" fill="#5C3A21"/>
+                    <rect x="4" y="6" width="16" height="12" fill="#5C3A21"/>
+                    <!-- Face -->
+                    <rect x="7" y="6" width="10" height="10" fill="#FFE0BD"/>
+                    <!-- Bangs -->
+                    <rect x="7" y="5" width="10" height="3" fill="#5C3A21"/>
+                    <!-- Cute Eyes -->
+                    <rect x="9" y="9" width="2" height="2.5" fill="#2A101C"/>
+                    <rect x="13" y="9" width="2" height="2.5" fill="#2A101C"/>
+                    <rect x="9.5" y="9" width="1" height="1" fill="#FFFFFF"/>
+                    <rect x="13.5" y="9" width="1" height="1" fill="#FFFFFF"/>
+                    <!-- Cheeks -->
+                    <rect x="8" y="11" width="2" height="1" fill="#FF85A1"/>
+                    <rect x="14" y="11" width="2" height="1" fill="#FF85A1"/>
+                    <!-- Mouth -->
+                    <rect x="11" y="12" width="2" height="1" fill="#E85D75"/>
+                    <!-- Ribbon/Bow -->
+                    <rect x="14" y="4" width="4" height="3" fill="#FF85A1"/>
+                    <rect x="15.5" y="5" width="1" height="1" fill="#FFFFFF"/>
+                    <!-- Outfit -->
+                    <rect x="7" y="16" width="10" height="6" fill="#A2E8DD"/>
+                    <rect x="9" y="9" width="6" height="2" fill="#FFFFFF"/>
+                  </svg>
+
+                  <span class="absolute bottom-0 right-0 text-[9px] bg-pastel-hotPink text-white px-1.5 py-0.5 border border-black font-pixel rounded">UI/UX</span>
+                </div>
+
+                <h3 id="console-title" class="font-pixel text-black text-lg md:text-xl tracking-wider">GWYNETH EUNICE</h3>
+                <p id="console-sub" class="text-pastel-deepPink text-xl font-bold">Product & UI/UX Designer</p>
+              </div>
+            </div>
+
+            <!-- Console Hinge Line -->
+            <div class="h-2 bg-pink-700 mx-8 my-1 rounded border-y border-black"></div>
+
+            <!-- Bottom Control Pad & Touch Screen -->
+            <div class="bg-pastel-pink p-3 border-4 border-black rounded-xl flex items-center justify-between gap-3">
+              
+              <!-- Cross D-Pad Control -->
+              <div class="relative w-16 h-16 flex-shrink-0">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="w-14 h-5 bg-black rounded-sm"></div>
+                  <div class="w-5 h-14 bg-black rounded-sm absolute"></div>
+                </div>
+              </div>
+
+              <!-- Center Interactive Display Mode Tabs -->
+              <div class="bg-white border-2 border-black p-2 rounded-md flex-grow text-center text-xs font-pixel text-black shadow-inner flex flex-col gap-1">
+                <p class="text-pastel-deepPink font-bold text-[9px]">SCREEN MODE SWITCHER:</p>
+                <div class="flex justify-center gap-1">
+                  <button onclick="switchConsoleTab('overview')" class="btn-pixel bg-pastel-skyBlue text-[8px] px-1.5 py-0.5 font-bold">PROFILE</button>
+                  <button onclick="switchConsoleTab('process')" class="btn-pixel bg-pastel-yellow text-[8px] px-1.5 py-0.5 font-bold">PROCESS</button>
+                  <button onclick="switchConsoleTab('philosophy')" class="btn-pixel bg-pastel-purple text-[8px] px-1.5 py-0.5 font-bold">ETHOS</button>
+                </div>
+              </div>
+
+              <!-- Action Buttons (A, B, X, Y) with Screen Switch Bindings -->
+              <div class="relative w-16 h-16 flex-shrink-0 flex items-center justify-center">
+                <div class="grid grid-cols-2 gap-1">
+                  <button onclick="switchConsoleTab('overview')" class="w-5 h-5 bg-pastel-yellow border-2 border-black rounded-full font-pixel text-[8px] font-bold text-black flex items-center justify-center shadow-pixel-sm btn-pixel">X</button>
+                  <button onclick="switchConsoleTab('process')" class="w-5 h-5 bg-pastel-blue border-2 border-black rounded-full font-pixel text-[8px] font-bold text-black flex items-center justify-center shadow-pixel-sm btn-pixel">Y</button>
+                  <button onclick="switchConsoleTab('philosophy')" class="w-5 h-5 bg-pastel-skyBlue border-2 border-black rounded-full font-pixel text-[8px] font-bold text-black flex items-center justify-center shadow-pixel-sm btn-pixel">A</button>
+                  <button onclick="switchConsoleTab('overview')" class="w-5 h-5 bg-pastel-hotPink border-2 border-black rounded-full font-pixel text-[8px] font-bold text-black flex items-center justify-center shadow-pixel-sm btn-pixel">B</button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- RIGHT: Y2K Retro Windows & Profile Info Card -->
+        <div class="lg:col-span-5 flex flex-col gap-4 stagger-item">
+          
+          <!-- Y2K Style Window Dialog Box -->
+          <div class="window-box flex-grow flex flex-col">
+            <!-- Window Header -->
+            <div class="bg-pastel-windowHead px-3 py-1.5 flex items-center justify-between border-b-3 border-black">
+              <span class="font-pixel text-xs text-white tracking-wider flex items-center gap-1.5">
+                <i data-lucide="user" class="w-3.5 h-3.5 text-black"></i> Designer Summary
+              </span>
+              <div class="flex gap-1">
+                <button class="w-4 h-4 bg-white border border-black font-pixel text-[8px] flex items-center justify-center text-black">_</button>
+                <button class="w-4 h-4 bg-pastel-hotPink border border-black font-pixel text-[8px] flex items-center justify-center text-white">X</button>
+              </div>
+            </div>
+
+            <!-- Window Inner Body -->
+            <div class="p-4 text-black font-vt text-xl leading-relaxed flex-grow flex flex-col justify-between">
+              <div>
+                <p class="mb-2"><strong class="font-pixel text-xs text-pastel-deepPink">DESIGNER:</strong> Gwyneth Eunice</p>
+                <p class="mb-2"><strong class="font-pixel text-xs text-pastel-deepPink">SPECIALIZATION:</strong> UI/UX Design, Design Systems & Product Strategy</p>
+                <p class="mb-3">
+                  <strong class="font-pixel text-xs text-pastel-deepPink">STATEMENT:</strong> Specialized in bridging user research with elegant visual design. Focused on creating scalable design systems, intuitive interfaces, and accessible digital products.
+                </p>
+              </div>
+              
+              <div class="p-3 bg-pastel-bg border-2 border-dashed border-pastel-windowBorder text-center font-pixel text-xs text-black shadow-inner">
+                + Driven by user empathy, visual clarity, and measurable impact.
+              </div>
+            </div>
+          </div>
+
+          <!-- Professional Philosophy Notepad -->
+          <div class="window-box bg-white">
+            <div class="bg-pastel-blue px-3 py-1 flex items-center justify-between text-xs font-pixel border-b-2 border-black">
+              <span class="text-black">Design_Principles.txt</span>
+              <span class="text-black">[X]</span>
+            </div>
+            <div class="p-3 font-vt text-xl text-gray-800 bg-yellow-50/50">
+              "Effective design solves real user pain points without sacrificing visual delight or technical feasibility."
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- LEVEL 02: SKILLS & TOOLS -->
+    <section id="skills" class="reveal-section pt-4 flex flex-col gap-6">
+      <div class="flex items-center justify-between border-b-4 border-black pb-2">
+        <div class="flex items-center gap-3">
+          <h2 class="font-pixel text-xl md:text-3xl text-pastel-blue drop-shadow-[2px_2px_0px_#2A101C]">
+            Level 02
+          </h2>
+          <span class="font-vt text-2xl md:text-3xl text-gray-700">/ Capabilities & Tech Stack</span>
+        </div>
+        <span class="bg-pastel-blue border-2 border-black font-pixel text-[10px] px-2 py-1">CORE COMPETENCIES</span>
+      </div>
+
+      <!-- 3 Windows Grid Layout -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Window 1: Software Tools -->
+        <div class="window-box flex flex-col stagger-item">
+          <div class="bg-pastel-windowHead px-3 py-1.5 flex items-center justify-between border-b-3 border-black">
+            <span class="font-pixel text-xs text-white">Design Tools</span>
+            <span class="font-pixel text-xs text-white">-</span>
+          </div>
+          <div class="p-4 flex-grow flex flex-col justify-between">
+            <p class="font-vt text-xl text-gray-700 mb-3">Industry-Standard Software:</p>
+            
+            <div class="grid grid-cols-3 gap-2.5">
+              <div class="bg-pastel-bg p-2 border-2 border-black rounded flex flex-col items-center justify-center hover:bg-pastel-skyBlue transition-all shadow-pixel-sm">
+                <i data-lucide="figma" class="w-7 h-7 text-pastel-deepPink mb-1"></i>
+                <span class="font-pixel text-[8px] font-bold">FIGMA</span>
+              </div>
+              <div class="bg-pastel-bg p-2 border-2 border-black rounded flex flex-col items-center justify-center hover:bg-pastel-skyBlue transition-all shadow-pixel-sm">
+                <i data-lucide="pen-tool" class="w-7 h-7 text-black mb-1"></i>
+                <span class="font-pixel text-[8px] font-bold">ADOBE CC</span>
+              </div>
+              <div class="bg-pastel-bg p-2 border-2 border-black rounded flex flex-col items-center justify-center hover:bg-pastel-skyBlue transition-all shadow-pixel-sm">
+                <i data-lucide="layout" class="w-7 h-7 text-pastel-deepPink mb-1"></i>
+                <span class="font-pixel text-[8px] font-bold">PROTOTYPER</span>
+              </div>
+              <div class="bg-pastel-bg p-2 border-2 border-black rounded flex flex-col items-center justify-center hover:bg-pastel-skyBlue transition-all shadow-pixel-sm">
+                <i data-lucide="code-2" class="w-7 h-7 text-teal-600 mb-1"></i>
+                <span class="font-pixel text-[8px] font-bold">HTML/CSS</span>
+              </div>
+              <div class="bg-pastel-bg p-2 border-2 border-black rounded flex flex-col items-center justify-center hover:bg-pastel-skyBlue transition-all shadow-pixel-sm">
+                <i data-lucide="box" class="w-7 h-7 text-purple-600 mb-1"></i>
+                <span class="font-pixel text-[8px] font-bold">BLENDER</span>
+              </div>
+              <div class="bg-pastel-bg p-2 border-2 border-black rounded flex flex-col items-center justify-center hover:bg-pastel-skyBlue transition-all shadow-pixel-sm">
+                <i data-lucide="palette" class="w-7 h-7 text-pastel-hotPink mb-1"></i>
+                <span class="font-pixel text-[8px] font-bold">CANVA</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Window 2: Education & Experience -->
+        <div class="window-box flex flex-col stagger-item">
+          <div class="bg-pastel-windowHead px-3 py-1.5 flex items-center justify-between border-b-3 border-black">
+            <span class="font-pixel text-xs text-white">Background</span>
+            <span class="font-pixel text-xs text-white">[]</span>
+          </div>
+          <div class="p-4 font-vt text-xl text-black flex-grow flex flex-col justify-between">
+            <div>
+              <div class="inline-block bg-pastel-yellow border border-black text-black px-2 py-0.5 text-xs font-pixel mb-2">
+                EDUCATION & FORMAL TRAINING
+              </div>
+              <h4 class="font-pixel text-sm text-pastel-deepPink mb-1">Bachelor of Design (UI/UX)</h4>
+              <p class="text-gray-800 font-bold">Interactive Media & UX Architecture</p>
+              <ul class="list-disc list-inside mt-3 text-lg text-gray-700 space-y-1">
+                <li>User Research & Usability Engineering</li>
+                <li>Design Systems & Component Architecture</li>
+                <li>Information Architecture & Flow Optimization</li>
+              </ul>
+            </div>
+
+            <div class="mt-4 p-2 bg-pastel-blue/40 border-2 border-black text-black font-pixel text-[10px] text-center font-bold">
+              FOCUS: USER-CENTERED DESIGN
+            </div>
+          </div>
+        </div>
+
+        <!-- Window 3: Core Design Methodology -->
+        <div class="window-box flex flex-col stagger-item">
+          <div class="bg-pastel-windowHead px-3 py-1.5 flex items-center justify-between border-b-3 border-black">
+            <span class="font-pixel text-xs text-white">Core Skills</span>
+            <span class="font-pixel text-xs text-white">X</span>
+          </div>
+          <div class="p-4 font-vt text-xl text-black flex-grow">
+            <ul class="space-y-2">
+              <li class="flex items-center gap-2">
+                <span class="text-pastel-hotPink font-pixel text-xs">+</span>
+                <span>User Interface (UI) Design Systems</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-pastel-hotPink font-pixel text-xs">+</span>
+                <span>User Experience (UX) Research & Mapping</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-pastel-hotPink font-pixel text-xs">+</span>
+                <span>Wireframing & Interactive Prototyping</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-pastel-hotPink font-pixel text-xs">+</span>
+                <span>Usability Testing & Accessibility (WCAG)</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-pastel-hotPink font-pixel text-xs">+</span>
+                <span>Visual Brand Identity & Graphics</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-pastel-hotPink font-pixel text-xs">+</span>
+                <span>Developer Handoff & Documentation</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- LEVEL 03: PROJECTS GALLERY -->
+    <section id="projects" class="reveal-section pt-4 flex flex-col gap-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-4 border-black pb-2 gap-2">
+        <div class="flex items-center gap-3">
+          <h2 class="font-pixel text-xl md:text-3xl text-pastel-hotPink drop-shadow-[2px_2px_0px_#2A101C]">
+            Level 03
+          </h2>
+          <span class="font-vt text-2xl md:text-3xl text-gray-700">/ Featured Case Studies</span>
+        </div>
+
+        <!-- Filter Tabs with Animated Active Indicator -->
+        <div class="flex items-center gap-1.5 font-pixel text-[9px]">
+          <button id="tab-all" onclick="filterProjects('all')" class="project-tab btn-pixel tab-active px-3 py-1">ALL</button>
+          <button id="tab-uiux" onclick="filterProjects('uiux')" class="project-tab btn-pixel bg-white text-black px-3 py-1">UI/UX</button>
+          <button id="tab-graphic" onclick="filterProjects('graphic')" class="project-tab btn-pixel bg-white text-black px-3 py-1">GRAPHIC</button>
+        </div>
+      </div>
+
+      <!-- Project Cards Grid with Fade-In Transitions -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-300" id="projects-grid">
+        
+        <!-- Project 1 -->
+        <div class="project-card window-box flex flex-col justify-between p-4 hover:border-pastel-hotPink transition-all stagger-item" data-category="uiux">
+          <div>
+            <div class="relative overflow-hidden border-2 border-black mb-3 h-44 bg-pastel-skyBlue flex items-center justify-center p-2">
+              <div class="bg-white border-2 border-black p-3 w-full h-full flex flex-col justify-between shadow-pixel-sm">
+                <div class="flex items-center justify-between border-b border-black pb-1">
+                  <span class="font-pixel text-[8px] text-pastel-deepPink">FINTECH / DASHBOARD</span>
+                  <span class="w-2 h-2 rounded-full bg-pastel-hotPink animate-ping"></span>
+                </div>
+                <div class="flex items-center justify-center my-2">
+                  <i data-lucide="layout-grid" class="w-12 h-12 text-pastel-hotPink"></i>
+                </div>
+                <div class="bg-pastel-yellow border border-black text-[9px] font-pixel text-center py-0.5">
+                  WEB PLATFORM
+                </div>
+              </div>
+              <span class="absolute top-2 left-2 bg-black text-white text-[8px] font-pixel px-2 py-0.5 border border-white">UI/UX</span>
+            </div>
+
+            <h3 class="font-pixel text-sm text-black mb-1">FINANCIAL ANALYTICS DASHBOARD</h3>
+            <p class="font-vt text-xl text-gray-700 mb-4">A streamlined data analytics platform designed to simplify complex financial workflows for modern teams.</p>
+          </div>
+
+          <button onclick="openModal('Financial Analytics Dashboard', 'UI/UX Case Study', 'Problem: Financial analysts faced cognitive overload due to cluttered data representation.\n\nSolution: Redesigned the visual hierarchy, built a custom modular widget system, and simplified transaction filtering.\n\nImpact: Reduced task completion time by 34% during usability testing.', ['Figma', 'User Research', 'Design System', 'Accessibility'])" class="btn-pixel w-full bg-pastel-hotPink text-white font-pixel text-xs py-2 text-center font-bold">
+            VIEW CASE STUDY
+          </button>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="project-card window-box flex flex-col justify-between p-4 hover:border-pastel-blue transition-all stagger-item" data-category="uiux">
+          <div>
+            <div class="relative overflow-hidden border-2 border-black mb-3 h-44 bg-pastel-yellow flex items-center justify-center p-2">
+              <div class="bg-white border-2 border-black p-3 w-full h-full flex flex-col justify-between shadow-pixel-sm">
+                <div class="flex items-center justify-between border-b border-black pb-1">
+                  <span class="font-pixel text-[8px] text-black">MOBILE / E-COMMERCE</span>
+                  <span class="w-2 h-2 rounded-full bg-pastel-blue"></span>
+                </div>
+                <div class="flex items-center justify-center my-2">
+                  <i data-lucide="shopping-bag" class="w-12 h-12 text-pastel-blue"></i>
+                </div>
+                <div class="bg-pastel-skyBlue border border-black text-[9px] font-pixel text-center py-0.5">
+                  MOBILE APP
+                </div>
+              </div>
+              <span class="absolute top-2 left-2 bg-black text-white text-[8px] font-pixel px-2 py-0.5 border border-white">MOBILE UX</span>
+            </div>
+
+            <h3 class="font-pixel text-sm text-black mb-1">SUSTAINABLE E-COMMERCE APP</h3>
+            <p class="font-vt text-xl text-gray-700 mb-4">End-to-end mobile shopping experience focused on eco-friendly product discovery and seamless checkout.</p>
+          </div>
+
+          <button onclick="openModal('Sustainable E-Commerce Mobile App', 'Mobile App Case Study', 'Problem: Shoppers struggled to verify eco-friendly credentials of products during mobile browsing.\n\nSolution: Created transparent eco-scoring badges and an intuitive 1-click checkout flow.\n\nImpact: Increased user engagement and trust ratings during prototype evaluation.', ['Mobile UI', 'Wireframing', 'Prototyping', 'User Flows'])" class="btn-pixel w-full bg-pastel-blue text-black font-pixel text-xs py-2 text-center font-bold">
+            VIEW CASE STUDY
+          </button>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="project-card window-box flex flex-col justify-between p-4 hover:border-pastel-purple transition-all stagger-item" data-category="graphic">
+          <div>
+            <div class="relative overflow-hidden border-2 border-black mb-3 h-44 bg-pastel-purple/50 flex items-center justify-center p-2">
+              <div class="bg-white border-2 border-black p-3 w-full h-full flex flex-col justify-between shadow-pixel-sm">
+                <div class="flex items-center justify-between border-b border-black pb-1">
+                  <span class="font-pixel text-[8px] text-purple-700">BRANDING & SYSTEM</span>
+                  <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                </div>
+                <div class="flex items-center justify-center my-2">
+                  <i data-lucide="layers" class="w-12 h-12 text-purple-500"></i>
+                </div>
+                <div class="bg-pastel-pink border border-black text-[9px] font-pixel text-center py-0.5">
+                  VISUAL SYSTEM
+                </div>
+              </div>
+              <span class="absolute top-2 left-2 bg-black text-white text-[8px] font-pixel px-2 py-0.5 border border-white">BRANDING</span>
+            </div>
+
+            <h3 class="font-pixel text-sm text-black mb-1">RETRO WAVE BRAND IDENTITY</h3>
+            <p class="font-vt text-xl text-gray-700 mb-4">Comprehensive design system, vector icon set, and brand guidelines for a digital studio.</p>
+          </div>
+
+          <button onclick="openModal('Retro Wave Brand Identity System', 'Visual Identity Project', 'Overview: Developed a cohesive visual identity system incorporating retro Y2K aesthetics with modern digital design tokens.\n\nDeliverables: Logo guidelines, color palettes, custom typography hierarchy, and UI component kit.', ['Adobe Illustrator', 'Brand Guidelines', 'Design Tokens'])" class="btn-pixel w-full bg-pastel-purple text-black font-pixel text-xs py-2 text-center font-bold">
+            VIEW CASE STUDY
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- LEVEL 04: CONTACT WINDOW -->
+    <section id="contact" class="reveal-section pt-4 pb-8">
+      <div class="window-box max-w-2xl mx-auto shadow-pixel-lg stagger-item">
+        <!-- Titlebar -->
+        <div class="bg-pastel-windowHead px-4 py-2 flex items-center justify-between border-b-3 border-black">
+          <span class="font-pixel text-xs text-white flex items-center gap-2">
+            <i data-lucide="mail" class="w-4 h-4 text-black"></i> GET IN TOUCH WITH GWYNETH
+          </span>
+          <span class="font-pixel text-xs text-white font-bold">[X]</span>
+        </div>
+
+        <div class="p-6">
+          <form id="contact-form" onsubmit="event.preventDefault(); showMessage();" class="flex flex-col gap-4 font-vt text-xl">
+            <div>
+              <label class="block font-pixel text-xs text-pastel-deepPink mb-1">YOUR NAME:</label>
+              <input type="text" required placeholder="Full Name or Organization..." class="w-full p-2.5 border-2 border-black bg-pastel-bg focus:outline-none focus:bg-white font-vt text-2xl transition-colors">
+            </div>
+
+            <div>
+              <label class="block font-pixel text-xs text-pastel-deepPink mb-1">EMAIL ADDRESS:</label>
+              <input type="email" required placeholder="name@company.com" class="w-full p-2.5 border-2 border-black bg-pastel-bg focus:outline-none focus:bg-white font-vt text-2xl transition-colors">
+            </div>
+
+            <div>
+              <label class="block font-pixel text-xs text-pastel-deepPink mb-1">INQUIRY TYPE & PROJECT DETAILS:</label>
+              <textarea rows="3" required placeholder="Describe your project, role, or collaboration idea..." class="w-full p-2.5 border-2 border-black bg-pastel-bg focus:outline-none focus:bg-white font-vt text-2xl transition-colors"></textarea>
+            </div>
+
+            <button type="submit" class="btn-pixel-lg w-full bg-pastel-hotPink text-white font-pixel text-xs py-3.5 tracking-wider uppercase font-bold mt-2">
+              SEND TRANSMISSION
+            </button>
+          </form>
+
+          <!-- Success Alert Message Box -->
+          <div id="contact-success" class="hidden mt-4 p-3 bg-emerald-100 border-2 border-black text-black font-pixel text-xs text-center shadow-pixel-sm">
+            MESSAGE TRANSMITTED SUCCESSFULLY. GWYNETH WILL RESPOND PROMPTLY.
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PROJECT MODAL POPUP -->
+  <div id="project-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+    <div class="window-box max-w-lg w-full bg-white relative">
+      <div class="bg-pastel-windowHead px-4 py-2 flex items-center justify-between border-b-3 border-black">
+        <span id="modal-category" class="font-pixel text-xs text-white">PROJECT DETAILS</span>
+        <button onclick="closeModal()" class="font-pixel text-xs text-white font-bold hover:text-black">X</button>
+      </div>
+      <div class="p-6">
+        <h3 id="modal-title" class="font-pixel text-base text-pastel-deepPink mb-2">Project Title</h3>
+        <p id="modal-desc" class="font-vt text-2xl text-gray-800 mb-4 leading-snug whitespace-pre-line">Project Description</p>
+        
+        <div class="mb-4">
+          <span class="font-pixel text-[10px] text-black block mb-2">TAGS & TOOLS:</span>
+          <div id="modal-tags" class="flex flex-wrap gap-2 font-pixel text-[9px]">
+            <!-- Tags dynamically populated -->
+          </div>
+        </div>
+
+        <button onclick="closeModal()" class="btn-pixel w-full bg-pastel-blue text-black font-pixel text-xs py-2 mt-2 font-bold">
+          CLOSE WINDOW
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RETRO FOOTER -->
+  <footer class="bg-white border-t-4 border-black py-6 text-center text-xs font-pixel text-black">
+    <div class="max-w-4xl mx-auto px-4 flex flex-col items-center gap-2">
+      <div class="flex items-center gap-2 text-pastel-deepPink">
+        <span>+ GWYNETH EUNICE PORTFOLIO + DESIGNED WITH PASSION +</span>
+      </div>
+      <p class="text-[10px] text-gray-600 font-vt text-xl">
+        Built with HTML, Tailwind CSS & Soft Retro Aesthetic
+      </p>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Smooth Screen Wipe Transition Effect between Navigation Sections
+    const wipeOverlay = document.getElementById('page-wipe-overlay');
+    function triggerPageWipe(e, targetId) {
+      if (e) e.preventDefault();
+      play8BitBeep(720, 'square', 0.1);
+      
+      wipeOverlay.classList.add('active');
+      setTimeout(() => {
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+        setTimeout(() => {
+          wipeOverlay.classList.remove('active');
+        }, 200);
+      }, 350);
+    }
+
+    // Scroll Reveal & Transition Effect Observer
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.15
+    });
+
+    document.querySelectorAll('.reveal-section').forEach(section => {
+      revealObserver.observe(section);
+    });
+
+    // Nintendo 3DS Screen View Switcher Logic
+    const consoleViews = {
+      overview: {
+        title: "GWYNETH EUNICE",
+        sub: "Product & UI/UX Designer",
+        bg: "#FDF0F5"
+      },
+      process: {
+        title: "DESIGN PROCESS",
+        sub: "Research -> Wireframe -> Prototype",
+        bg: "#FFF3B0"
+      },
+      philosophy: {
+        title: "CORE ETHOS",
+        sub: "Empathy + Clarity + Feasibility",
+        bg: "#D8B4F8"
+      }
+    };
+
+    function switchConsoleTab(mode) {
+      play8BitBeep(620, 'triangle', 0.08);
+      const display = document.getElementById('console-display');
+      const title = document.getElementById('console-title');
+      const sub = document.getElementById('console-sub');
+
+      display.style.opacity = '0';
+      setTimeout(() => {
+        if (consoleViews[mode]) {
+          title.innerText = consoleViews[mode].title;
+          sub.innerText = consoleViews[mode].sub;
+          display.style.backgroundColor = consoleViews[mode].bg;
+        }
+        display.style.opacity = '1';
+      }, 150);
+    }
+
+    // 8-Bit Audio Sound Generator
+    let soundEnabled = true;
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function play8BitBeep(freq = 520, type = 'square', duration = 0.08) {
+      if (!soundEnabled) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    // Sound Toggle
+    const sfxBtn = document.getElementById('sfx-btn');
+    const sfxText = document.getElementById('sfx-text');
+    sfxBtn.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      sfxText.innerText = soundEnabled ? 'SFX ON' : 'SFX OFF';
+      sfxBtn.classList.toggle('opacity-50');
+      if (soundEnabled) play8BitBeep(600, 'square', 0.1);
+    });
+
+    // Sound on buttons click
+    document.querySelectorAll('.btn-pixel, .btn-pixel-lg').forEach(btn => {
+      btn.addEventListener('click', () => {
+        play8BitBeep(580, 'square', 0.06);
+      });
+    });
+
+    // Form Handler
+    function showMessage() {
+      play8BitBeep(880, 'square', 0.15);
+      document.getElementById('contact-form').reset();
+      const successBox = document.getElementById('contact-success');
+      successBox.classList.remove('hidden');
+      setTimeout(() => {
+        successBox.classList.add('hidden');
+      }, 4000);
+    }
+
+    // Modal Logic
+    const modal = document.getElementById('project-modal');
+    function openModal(title, category, desc, tags) {
+      play8BitBeep(700, 'triangle', 0.1);
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-category').innerText = category.toUpperCase();
+      document.getElementById('modal-desc').innerText = desc;
+      
+      const tagsContainer = document.getElementById('modal-tags');
+      tagsContainer.innerHTML = '';
+      tags.forEach(tag => {
+        const span = document.createElement('span');
+        span.className = 'bg-pastel-pink border border-black text-black px-2 py-1';
+        span.innerText = tag;
+        tagsContainer.appendChild(span);
+      });
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      play8BitBeep(400, 'square', 0.05);
+      modal.classList.add('hidden');
+    }
+
+    // Filter Projects Category Logic with Dynamic Tab Styling
+    function filterProjects(category) {
+      play8BitBeep(650, 'square', 0.06);
+      
+      // Update Tab Highlights
+      document.querySelectorAll('.project-tab').forEach(tab => {
+        tab.classList.remove('tab-active');
+        tab.classList.add('bg-white', 'text-black');
+      });
+
+      const activeBtn = document.getElementById(`tab-${category}`);
+      if (activeBtn) {
+        activeBtn.classList.add('tab-active');
+        activeBtn.classList.remove('bg-white', 'text-black');
+      }
+
+      const grid = document.getElementById('projects-grid');
+      grid.style.opacity = '0';
+
+      setTimeout(() => {
+        const cards = document.querySelectorAll('.project-card');
+        cards.forEach(card => {
+          if (category === 'all' || card.dataset.category === category) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+        grid.style.opacity = '1';
+      }, 200);
+    }
+  </script>
+</body>
+</html>
